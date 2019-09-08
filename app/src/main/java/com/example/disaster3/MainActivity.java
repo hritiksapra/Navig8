@@ -34,6 +34,8 @@ import android.widget.Toast;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.Strategy;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
@@ -214,8 +216,6 @@ public class MainActivity extends ConnectionsActivity implements SensorEventList
             stopPlaying();
         }
 
-        setState(State.UNKNOWN);
-
         mUiHandler.removeCallbacksAndMessages(null);
 
         if (mCurrentAnimator != null && mCurrentAnimator.isRunning()) {
@@ -250,17 +250,11 @@ public class MainActivity extends ConnectionsActivity implements SensorEventList
 
     @Override
     protected void onEndpointConnected(Endpoint endpoint) {
-        Toast.makeText(
-                this, getString(R.string.toast_connected, endpoint.getName()), Toast.LENGTH_SHORT)
-                .show();
         setState(State.CONNECTED);
     }
 
     @Override
     protected void onEndpointDisconnected(Endpoint endpoint) {
-        Toast.makeText(
-                this, getString(R.string.toast_disconnected, endpoint.getName()), Toast.LENGTH_SHORT)
-                .show();
 
         // If we lost all our endpoints, then we should reset the state of our app and go back
         // to our initial state (discovering).
@@ -556,6 +550,7 @@ public class MainActivity extends ConnectionsActivity implements SensorEventList
             mAudioPlayers.add(player);
             player.start();
         }
+
     }
 
     /** Stops all currently streaming audio tracks. */

@@ -57,6 +57,8 @@ public abstract class ConnectionsActivity extends AppCompatActivity {
                     Manifest.permission.CHANGE_WIFI_STATE,
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
             };
 
     private static final int REQUEST_CODE_REQUIRED_PERMISSIONS = 1;
@@ -65,7 +67,8 @@ public abstract class ConnectionsActivity extends AppCompatActivity {
     private ConnectionsClient mConnectionsClient;
 
     /** The devices we've discovered near us. */
-    private final Map<String, Endpoint> mDiscoveredEndpoints = new HashMap<>();
+    private static final Map<String, Endpoint> mDiscoveredEndpoints = new HashMap<>();
+
 
     /**
      * The devices we have pending connections to. They will stay pending until we call {@link
@@ -77,7 +80,7 @@ public abstract class ConnectionsActivity extends AppCompatActivity {
      * The devices we are currently connected to. For advertisers, this may be large. For discoverers,
      * there will only be one entry in this map.
      */
-    private final Map<String, Endpoint> mEstablishedConnections = new HashMap<>();
+    private static final Map<String, Endpoint> mEstablishedConnections = new HashMap<>();
 
     /**
      * True if we are asking a discovered device to connect to us. While we ask, we cannot ask another
@@ -360,12 +363,13 @@ public abstract class ConnectionsActivity extends AppCompatActivity {
         mEstablishedConnections.remove(endpoint.getId());
     }
 
+
     /** Disconnects from all currently connected endpoints. */
     protected void disconnectFromAllEndpoints() {
         for (Endpoint endpoint : mEstablishedConnections.values()) {
             mConnectionsClient.disconnectFromEndpoint(endpoint.getId());
         }
-        mEstablishedConnections.clear();
+        //mEstablishedConnections.clear();
     }
 
     /** Resets and clears all state in Nearby Connections. */
@@ -376,7 +380,7 @@ public abstract class ConnectionsActivity extends AppCompatActivity {
         mIsConnecting = false;
         mDiscoveredEndpoints.clear();
         mPendingConnections.clear();
-        mEstablishedConnections.clear();
+        //mEstablishedConnections.clear();
     }
 
     /**
@@ -416,7 +420,7 @@ public abstract class ConnectionsActivity extends AppCompatActivity {
 
     private void disconnectedFromEndpoint(Endpoint endpoint) {
         logD(String.format("disconnectedFromEndpoint(endpoint=%s)", endpoint));
-        mEstablishedConnections.remove(endpoint.getId());
+       //mEstablishedConnections.remove(endpoint.getId());
         onEndpointDisconnected(endpoint);
     }
 
@@ -438,7 +442,7 @@ public abstract class ConnectionsActivity extends AppCompatActivity {
     }
 
     /** Returns a list of currently connected endpoints. */
-    protected Set<Endpoint> getConnectedEndpoints() {
+    protected static Set<Endpoint> getConnectedEndpoints() {
         return new HashSet<>(mEstablishedConnections.values());
     }
 
@@ -552,6 +556,10 @@ public abstract class ConnectionsActivity extends AppCompatActivity {
         Log.e(TAG, msg, e);
     }
 
+    public static Map<String, Endpoint> getEndpoint() {
+        return mDiscoveredEndpoints;
+    }
+
     /** Represents a device we can talk to. */
     protected static class Endpoint {
         @NonNull private final String id;
@@ -591,4 +599,6 @@ public abstract class ConnectionsActivity extends AppCompatActivity {
             return String.format("Endpoint{id=%s, name=%s}", id, name);
         }
     }
+
+
 }

@@ -16,4 +16,8 @@ public class CameraActivity extends Activity {
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
 }
